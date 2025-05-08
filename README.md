@@ -1,22 +1,13 @@
-# D3b Bixu Repository Template
+# INCLUDE chr21 Variant Pipeline Development Project
 
-Use this template to bootstrap a new D3b bixu repository 
+This repo is used to house tools and workflows to improve and enhance analysis of non-diploid human genome data 
 
-### Badges
 
-Update the LICENSE badge to point to the new repo location on GitHub.
-Note that the LICENSE badge will fail to render correctly unless the repo has
-been set to **public**.
+<p align="center">
+  <a href="https://github.com/d3b-center/INCLUDE-Ch21-Variant-Calling-Dev Managed/blob/master/LICENSE"><img src="https://img.shields.io/github/license/kids-first/kf-api-dataservice.svg?style=for-the-badge"></a>
+</p>
 
-Add additional badges for CI, docs, and other integrations as needed within the
-`<p>` tag next to the LICENSE.
-
-### Repo Description
-
-Update the repositories description with a short summary of the repository's
-intent.
-Include an appropriate emoji at the start of the summary.
-
-Add a handful of tags that summarize topics relating to the repository.
-If the repo has a documentation site or webpage, add it next to the repository
-description.
+## [Kids First DRC GATK HaplotypeCaller Modified Ploidy BETA Workflow](docs/KFDRC_GATK_HC_MOD_PLOIDY_README.md)
+This is a research workflow for users wishing to modify the ploidy of certain
+regions of their existing GVCF calls. This uses the `coalescent` genotype model, equivalent to GATK 3.8
+from Sentieon, a close analog of the original production workflow GATK 3.5 (via 4beta).
