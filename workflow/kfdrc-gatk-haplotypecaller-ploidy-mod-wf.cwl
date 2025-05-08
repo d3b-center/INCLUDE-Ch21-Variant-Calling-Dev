@@ -66,8 +66,6 @@ inputs:
   contamination_sites_ud: {type: 'File?', doc: ".UD matrix file from SVD result of genotype matrix", "sbg:suggestedValue": {class: File,
       path: 6063901f357c3a53540ca84f, name: Homo_sapiens_assembly38.contam.UD}}
   re_calling_interval_list: {type: 'File', doc: "Interval list to re-call"}
-  wgs_evaluation_interval_list: {type: 'File', doc: "Target intervals to restrict gvcf metric analysis (for VariantCallingMetrics)",
-    "sbg:suggestedValue": {class: File, path: 60639017357c3a53540ca7d3, name: wgs_evaluation_regions.hg38.interval_list}}
   sample_ploidy: {type: 'int?', doc: "If sample/interval is expected to not have ploidy=2, enter expected ploidy"}
   use_sentieon: { type: 'boolean?', doc: "If true, use Sentieon implementation for haplotype caller instead of GATK", default: true }
   # Sentieon GVCF Genotyping
@@ -82,10 +80,10 @@ inputs:
   genotype_cpus: { type: 'int?', doc : "Min num CPUs to make available for Sentieon GVCFtyper", default: 32}
   genotype_ram: { type: 'int?', doc : "Min amt RAM in GB to make available for Sentieon GVCFtyper", default: 64}
 
-
 outputs:
   mixed_ploidy_gvcf: {type: File, outputSource: picard_mergevcfs/output}
   mixed_ploidy_genotyped_vcf: { type: File, outputSource: sentieon_gvcftyper/output}
+  mixed_ploidy_gvcf_metrics: { type: 'File[]', doc: "Contains GVCF metrics from ploidy mod ONLY", outputSource: picard_collectgvcfcallingmetrics/output }
 
 steps:
   gatk_intervallist_to_bed:
@@ -225,7 +223,7 @@ steps:
       reference_dict:
         source: reference_fasta
         valueFrom: "$(self.secondaryFiles.filter(function(e) {return e.nameext == '.dict'})[0])"
-      wgs_evaluation_interval_list: wgs_evaluation_interval_list
+      wgs_evaluation_interval_list: re_calling_interval_list
     out: [output]
   picard_mergevcfs:
     run: ../kf-alignment-workflow/tools/picard_mergevcfs.cwl
