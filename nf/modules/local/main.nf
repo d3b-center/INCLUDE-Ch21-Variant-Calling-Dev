@@ -3,18 +3,27 @@ process SENTIEON_DNASCOPE {
 
     input:
     tuple path(alignment), path(align_index)
-    path(reference)
+    tuple path(reference), path(fai)
 
     output:
     path('*vcf.gz'), emit: output_vcf
 
     script:
-    def dnascope_ext_args = task.ext.args ?: ''
+    def license_export = task.ext.export_args ?: ''
+    def driver_ext_args = task.ext.driver_args ?: ''
+    def algo_ext_args = task.ext.algo_args ?: ''
     """
-    sentieon driver --algo DNAscope \\
+    $license_export \\
+    sentieon driver \\
     -i $alignment \\
     -r $reference \\
-    $dnascope_ext_args
+    $driver_ext_args \\
+    --algo DNAscope \\
+    $algo_ext_args
     """
 
+    stub:
+    """
+    touch result.vcf.gz
+    """
 }
