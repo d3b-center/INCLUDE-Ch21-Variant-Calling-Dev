@@ -11,10 +11,9 @@ workflow {
     indexed_alignment = alignment.combine(align_index)
     reference_fai = reference.combine(reference_index)
 
-
     output_vcf = SENTIEON_DNASCOPE(
         indexed_alignment,
-        reference: reference_fai,
+        reference_fai
     )
 
     output_vcf.view()

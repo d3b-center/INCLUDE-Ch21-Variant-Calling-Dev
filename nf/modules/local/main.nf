@@ -1,4 +1,5 @@
 process SENTIEON_DNASCOPE {
+    label 'C8'
     container "pgc-images.sbgenomics.com/hdchen/sentieon:202308.03"
 
     input:
