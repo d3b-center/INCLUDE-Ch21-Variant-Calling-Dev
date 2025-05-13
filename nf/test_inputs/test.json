@@ -4,8 +4,9 @@
     "reference": "/home/ubuntu/volume/SB/projects/matthew.galbraith/chr21-variant-pipeline-dev/Homo_sapiens_assembly38.fasta",
     "reference_index": "/home/ubuntu/volume/SB/projects/matthew.galbraith/chr21-variant-pipeline-dev/Homo_sapiens_assembly38.fasta.fai",
     "sentieon_license_file": "/home/ubuntu/volume/Childrens_Hospital_of_Philadelphia_eval.lic",
-    "interval": "/home/ubuntu/volume/SB/projects/matthew.galbraith/chr21-variant-pipeline-dev/chr21_calling_regions.hg38.interval_list",
-    "ploidy": 3,
+    "wgs_intervals": "/home/ubuntu/volume/SB/projects/matthew.galbraith/chr21-variant-pipeline-dev/wgs_calling_regions.hg38.interval_list",
+    "non_diploid_intervals": "/home/ubuntu/volume/SB/projects/matthew.galbraith/chr21-variant-pipeline-dev/chr21_calling_regions.hg38.interval_list",
+    "non_diploid_ploidy": 3,
     "aws_test_instance": true,
     "emit_mode": "gvcf",
     "dbSNP": "/home/ubuntu/volume/SB/projects/matthew.galbraith/chr21-variant-pipeline-dev/Homo_sapiens_assembly38.dbsnp138.vcf"
