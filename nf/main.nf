@@ -23,6 +23,7 @@ workflow {
 
     subtracted_intervals = GATK_INTERVALLISTOOLS(
         wgs_intervals,
+        non_diploid_intervals,
         'SUBTRACT'
     )
     diploid_vcf = SENTIEON_DNASCOPE_DIPLOID(

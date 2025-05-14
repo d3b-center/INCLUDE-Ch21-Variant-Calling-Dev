@@ -13,6 +13,7 @@ process SENTIEON_GVCFTYPER {
 
     script:
     def license_export = task.ext.export_args ?: ''
+    def dbsnp_flag = dbsnp ? "-d $dbsnp" : ''
     def algo_ext_args = task.ext.algo_args ?: ''
     """
     $license_export \\
@@ -20,7 +21,7 @@ process SENTIEON_GVCFTYPER {
     -r $reference \\
     --algo GVCFtyper \\
     -v $gvcf \\
-    ${params.dbsnp ? '-d $dbsnp' : ''} \\
+    $dbsnp_flag \\
     $algo_ext_args
     """
 

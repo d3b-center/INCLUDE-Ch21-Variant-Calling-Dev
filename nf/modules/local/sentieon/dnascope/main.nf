@@ -14,6 +14,7 @@ process SENTIEON_DNASCOPE {
     tuple path('*vcf.gz'), path('*vcf.gz.tbi'), emit: output_vcf
     script:
     def license_export = task.ext.export_args ?: ''
+    def dbsnp_flag = dbsnp ? "-d $dbsnp" : ''
     def algo_ext_args = task.ext.algo_args ?: ''
     """
     $license_export \\
@@ -23,7 +24,7 @@ process SENTIEON_DNASCOPE {
     --interval $interval \\
     --algo DNAscope \\
     --ploidy $ploidy \\
-    ${params.dbsnp ? '-d $dbsnp' : ''} \\
+    $dbsnp_flag \\
     $algo_ext_args
     """
 
