@@ -3,6 +3,8 @@
 include { SENTIEON_DNASCOPE } from './modules/local/sentieon/dnascope/main'
 include { SENTIEON_DNASCOPE as SENTIEON_DNASCOPE_DIPLOID } from './modules/local/sentieon/dnascope/main'
 include { GATK_INTERVALLISTOOLS } from './modules/local/gatk/intervallisttools/main'
+include { PICARD_MERGEVCFS } from './modules/local/picard/mergevcfs/main'
+include { SENTIEON_GVCFTYPER } from './modules/local/sentieon/gvcftyper/main.nf'
 
 workflow {
     main:
@@ -32,6 +34,13 @@ workflow {
         non_diploid_intervals,
         non_diploid_ploidy
     )
-    diploid_vcf.view()
-    non_diploid_vcf.view()
+    merged_gvcf = PICARD_MERGEVCFS(
+        diploid_vcf,
+        non_diploid_vcf
+    )
+
+    gt_vcf = SENTIEON_GVCFTYPER(
+        merged_gvcf,
+        reference_fai,
+    )
 }
