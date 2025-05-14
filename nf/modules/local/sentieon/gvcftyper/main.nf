@@ -1,10 +1,11 @@
 process SENTIEON_GVCFTYPER {
-    label 'C8'
+    label 'C32'
     container "pgc-images.sbgenomics.com/hdchen/sentieon:202308.03"
 
     input:
     tuple path(gvcf), path(gvcf_index)
     tuple path(reference), path(fai)
+    tuple path(dbsnp), path(dbsnp_index)
 
     output:
     path('*vcf.gz'), emit: output_vcf
@@ -18,7 +19,8 @@ process SENTIEON_GVCFTYPER {
     sentieon driver \\
     -r $reference \\
     --algo GVCFtyper \\
-    --v $gvcf \\
+    -v $gvcf \\
+    ${params.dbsnp ? '-d $dbsnp' : ''} \\
     $algo_ext_args
     """
 

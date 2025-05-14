@@ -1,0 +1,264 @@
+app_content:
+    code_package: 6824e62b2b97f154cf98da2a
+    entrypoint: main.nf
+class: nextflow
+executor_version: 23.04.1
+cwlVersion: None
+requirements:
+-   class: InlineJavascriptRequirement
+doc: '# KFDRC Sentieon DNAscope Mixed Ploidy Workflow
+
+    This is a beta workflow to test the efficacy of using DNAscope for mixed ploidy
+    samples.
+
+
+    ![image](logo/kids_first_logo.svg#sbg_width=660px)
+
+
+    ## INPUTS
+
+    ### Required:
+
+    - alignment: BAM or CRAM file
+
+    - align_index: Index of `alignment` file
+
+    - reference: FASTA reference
+
+    - reference_index: FAI index of `reference`
+
+    - wgs_intervals: GATK Interval List format WGS intervals
+
+    - non_diploid_intervals: GATK Interval list format intervals of non-diploid regions
+
+    - non_diploid_ploidy: ploidy of non-diploid regions
+
+    - sentieon_license_file _or_ sentieon_license_server: One of these must be populated,
+    depending on local run or cloud
+
+    ### Optional
+
+    - dbSNP: dbSNP reference to use for populating VCF `ID` column
+
+    - sample_id: If VCF `FORMAT` column sample names should be different from what
+    is in `alignment` `SM:` `@RG` field, put new name here
+
+    - emit_mode: Currently changing this will break the workflow
+
+
+    ## OUTPUTS:
+
+    - DNAscope GVCF
+
+    - DNAscope Genotyped VCF'
+hints:
+-   class: sbg:NextflowExecutionMode
+    value: multi-instance
+-   class: "sbg:maxNumberOfParallelInstances"
+    value: 3
+inputs:
+-   id: alignment
+    inputBinding:
+        prefix: --alignment
+    type:
+    - File
+    doc: BAM or CRAM file
+-   id: align_index
+    inputBinding:
+        prefix: --align_index
+    type:
+    - File
+    doc: Index of `alignment` file
+-   id: reference
+    inputBinding:
+        prefix: --reference
+    type:
+    - File
+    doc: FASTA reference
+-   id: reference_index
+    inputBinding:
+        prefix: --reference_index
+    type:
+    - File
+    doc: FAI index of `reference`
+-   id: output_basename
+    inputBinding:
+        prefix: --output_basename
+    default: output
+    type:
+    - 'null'
+    - string
+    doc: Basename for output files
+-   id: pcr_indel_model
+    inputBinding:
+        prefix: --pcr_indel_model
+    default: conservative
+    type:
+    - 'null'
+    - string
+-   id: emit_mode
+    inputBinding:
+        prefix: --emit_mode
+    default: gvcf
+    type:
+    - 'null'
+    - string
+-   id: var_type
+    inputBinding:
+        prefix: --var_type
+    default: snp,indel
+    type:
+    - 'null'
+    - string
+-   id: non_diploid_ploidy
+    inputBinding:
+        prefix: --non_diploid_ploidy
+    default: 3
+    type:
+    - 'null'
+    - int
+-   id: call_conf
+    inputBinding:
+        prefix: --call_conf
+    default: 30
+    type:
+    - 'null'
+    - int
+-   id: emit_conf
+    inputBinding:
+        prefix: --emit_conf
+    default: 30
+    type:
+    - 'null'
+    - int
+-   id: genotype_model
+    inputBinding:
+        prefix: --genotype_model
+    default: multinomial
+    type:
+    - 'null'
+    - string
+    doc: Genotype model to use.
+-   id: sentieon_license_server
+    inputBinding:
+        prefix: --sentieon_license_server
+    type:
+    - 'null'
+    - string
+    doc: Sentieon license server to use. This is required for cloud runs.
+    default: 10.5.64.221:8990
+-   id: wgs_intervals
+    inputBinding:
+        prefix: --wgs_intervals
+    type:
+    - File
+    doc: GATK Interval List format WGS intervals
+-   id: non_diploid_intervals
+    inputBinding:
+        prefix: --non_diploid_intervals
+    type:
+    - File
+    doc: GATK Interval list format intervals of non-diploid regions
+-   id: dbsnp
+    inputBinding:
+        prefix: --dbsnp
+    type:
+    - 'null'
+    - File
+    doc: dbSNP reference to use for populating VCF `ID` column
+-   id: dbsnp_index
+    inputBinding:
+        prefix: --dbsnp_index
+    type:
+    - 'null'
+    - File
+    doc: Index of `dbsnp` file
+-   id: action
+    inputBinding:
+        prefix: --action
+    default: SUBTRACT
+    type:
+    - 'null'
+    - string
+-   id: sample_id
+    inputBinding:
+        prefix: --sample_id
+    type:
+    - 'null'
+    - string
+    doc: If VCF `FORMAT` column sample names should be different from what is in `alignment` `SM:` `@RG` field, put new name here
+
+-   id: sbg_run
+    inputBinding:
+        prefix: --sbg_run
+    type:
+    - 'null'
+    - boolean
+    default: true
+    doc: Set to true if running on SBG
+-   id: outdir
+    inputBinding:
+        prefix: --outdir
+    label: Path to the output directory where the results will be saved.
+    sbg:category: Input/output options
+    sbg:icon: fas fa-folder-open
+    default: ./results
+    type:
+    - 'null'
+    - string
+-   doc: Use to set an upper-limit for the CPU requirement for each process. Should
+        be an integer e.g. `--max_cpus 1`
+    id: max_cpus
+    inputBinding:
+        prefix: --max_cpus
+    label: Maximum number of CPUs that can be requested for any single job.
+    sbg:category: Max job request options
+    sbg:hidden: true
+    sbg:icon: fas fa-microchip
+    default: 48
+    type:
+    - 'null'
+    - int
+-   doc: Use to set an upper-limit for the memory requirement for each process. Should
+        be a string in the format integer-unit e.g. `--max_memory '8.GB'`
+    id: max_memory
+    inputBinding:
+        prefix: --max_memory
+    label: Maximum amount of memory that can be requested for any single job.
+    sbg:category: Max job request options
+    sbg:hidden: true
+    sbg:icon: fas fa-memory
+    sbg:pattern: ^\d+(\.\d+)?\.?\s*(K|M|G|T)?B$
+    default: 128.GB
+    type:
+    - 'null'
+    - string
+-   doc: Use to set an upper-limit for the time requirement for each process. Should
+        be a string in the format integer-unit e.g. `--max_time '2.h'`
+    id: max_time
+    inputBinding:
+        prefix: --max_time
+    label: Maximum amount of time that can be requested for any single job.
+    sbg:category: Max job request options
+    sbg:hidden: true
+    sbg:icon: far fa-clock
+    sbg:pattern: ^(\d+\.?\s*(s|m|h|day)\s*)+$
+    default: 240.h
+    type:
+    - 'null'
+    - string
+
+outputs:
+-   id: DNAscope_GVCF
+    label: DNAscope GVCF
+    outputBinding:
+        glob: 'results/DNAscope_GVCF/*vcf.gz*'
+    type:
+    - File
+-   id: DNAscope_Genotyped_VCF
+    label: DNAscope Genotyped VCF
+    outputBinding:
+        glob: 'results/DNAscope_Genotyped_VCF/*.vcf.gz*'
+    type:
+    - File
+sbg:revisionNotes: Uploaded using sbpack v2024.12.17

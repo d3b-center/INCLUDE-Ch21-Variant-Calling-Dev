@@ -8,15 +8,18 @@ include { SENTIEON_GVCFTYPER } from './modules/local/sentieon/gvcftyper/main.nf'
 
 workflow {
     main:
-    alignment = params.alignment ? Channel.fromPath(params.alignment) : Channel.value()
-    align_index = params.align_index ? Channel.fromPath(params.align_index) : Channel.value()
+    alignment = params.alignment ? Channel.fromPath(params.alignment) : Channel.value([])
+    align_index = params.align_index ? Channel.fromPath(params.align_index) : Channel.value([])
     reference = Channel.fromPath(params.reference).first()
     reference_index = Channel.fromPath(params.reference_index).first()
     wgs_intervals = Channel.fromPath(params.wgs_intervals).first()
     non_diploid_intervals = Channel.fromPath(params.non_diploid_intervals).first()
     non_diploid_ploidy = params.non_diploid_ploidy
+    dbsnp = params.dbsnp ? Channel.fromPath(params.dbsnp) : Channel.value([])
+    dbsnp_index = params.dbsnp_index ? Channel.fromPath(params.dbsnp_index) : Channel.value([])
     indexed_alignment = alignment.combine(align_index)
     reference_fai = reference.combine(reference_index)
+    dbsnp_combined = dbsnp.combine(dbsnp_index)
 
     subtracted_intervals = GATK_INTERVALLISTOOLS(
         wgs_intervals,
@@ -26,13 +29,15 @@ workflow {
         indexed_alignment,
         reference_fai,
         subtracted_intervals,
-        2
+        2,
+        dbsnp_combined
     )
     non_diploid_vcf = SENTIEON_DNASCOPE(
         indexed_alignment,
         reference_fai,
         non_diploid_intervals,
-        non_diploid_ploidy
+        non_diploid_ploidy,
+        dbsnp_combined
     )
     merged_gvcf = PICARD_MERGEVCFS(
         diploid_vcf,
@@ -42,5 +47,6 @@ workflow {
     gt_vcf = SENTIEON_GVCFTYPER(
         merged_gvcf,
         reference_fai,
+        dbsnp_combined
     )
 }

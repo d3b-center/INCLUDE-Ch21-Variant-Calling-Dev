@@ -1,5 +1,5 @@
 process SENTIEON_DNASCOPE {
-    label 'C8'
+    label 'C32'
     container "pgc-images.sbgenomics.com/hdchen/sentieon:202308.03"
 
     input:
@@ -7,6 +7,8 @@ process SENTIEON_DNASCOPE {
     tuple path(reference), path(fai)
     path(interval)
     val(ploidy)
+    tuple path(dbsnp), path(dbsnp_index)
+
 
     output:
     tuple path('*vcf.gz'), path('*vcf.gz.tbi'), emit: output_vcf
@@ -21,6 +23,7 @@ process SENTIEON_DNASCOPE {
     --interval $interval \\
     --algo DNAscope \\
     --ploidy $ploidy \\
+    ${params.dbsnp ? '-d $dbsnp' : ''} \\
     $algo_ext_args
     """
 
