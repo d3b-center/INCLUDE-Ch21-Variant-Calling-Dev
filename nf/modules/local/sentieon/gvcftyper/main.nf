@@ -1,5 +1,5 @@
 process SENTIEON_GVCFTYPER {
-    label 'C8'
+    label 'C32'
     container "pgc-images.sbgenomics.com/hdchen/sentieon:202308.03"
 
     input:
@@ -14,6 +14,7 @@ process SENTIEON_GVCFTYPER {
     def license_export = task.ext.export_args ?: ''
     def dbsnp_flag = dbsnp ? "-d $dbsnp" : ''
     def algo_ext_args = task.ext.algo_args ?: ''
+    def output_filename = task.ext.prefix ? "${task.ext.prefix}.vcf.gz": "genotyped.vcf.gz"
     """
     $license_export \\
     sentieon driver \\
@@ -21,7 +22,8 @@ process SENTIEON_GVCFTYPER {
     --algo GVCFtyper \\
     -v $gvcf \\
     $dbsnp_flag \\
-    $algo_ext_args
+    $algo_ext_args \\
+    $output_filename
     """
 
     stub:
