@@ -57,12 +57,14 @@ inputs:
     type:
     - File
     doc: FASTA reference
+    sbg:suggestedValue: { class: File, path: 60639014357c3a53540ca7a3, name: Homo_sapiens_assembly38.fasta }
 -   id: reference_index
     inputBinding:
         prefix: --reference_index
     type:
     - File
     doc: FAI index of `reference`
+    sbg:suggestedValue: { class: File, path: 60639016357c3a53540ca7af, name: Homo_sapiens_assembly38.fasta.fai }
 -   id: output_basename
     inputBinding:
         prefix: --output_basename
@@ -135,6 +137,7 @@ inputs:
     type:
     - File
     doc: GATK Interval List format WGS intervals
+    sbg:suggestedValue: { class: File, path: 682382028629c5590146a92e, name: wgs_calling_regions.hg38.interval_list }
 -   id: non_diploid_intervals
     inputBinding:
         prefix: --non_diploid_intervals
@@ -148,6 +151,7 @@ inputs:
     - 'null'
     - File
     doc: dbSNP reference to use for populating VCF `ID` column
+    sbg:suggestedValue: { class: File, path: 6825ea6d799cc5199034188d, name: Homo_sapiens_assembly38.dbsnp138.vcf.gz }
 -   id: dbsnp_index
     inputBinding:
         prefix: --dbsnp_index
@@ -155,6 +159,7 @@ inputs:
     - 'null'
     - File
     doc: Index of `dbsnp` file
+    sbg:suggestedValue: { class: File, path: 6825ea6d799cc5199034188c, name: Homo_sapiens_assembly38.dbsnp138.vcf.gz.tbi }
 -   id: action
     inputBinding:
         prefix: --action

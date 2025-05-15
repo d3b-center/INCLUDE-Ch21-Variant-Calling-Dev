@@ -9,7 +9,8 @@
     "non_diploid_ploidy": 3,
     "aws_test_instance": true,
     "emit_mode": "gvcf",
-    "dbSNP": "/home/ubuntu/volume/SB/projects/matthew.galbraith/chr21-variant-pipeline-dev/Homo_sapiens_assembly38.dbsnp138.vcf",
+    "dbsnp": "/home/ubuntu/volume/SB/projects/matthew.galbraith/chr21-variant-pipeline-dev/Homo_sapiens_assembly38.dbsnp138.vcf.gz",
+    "dbsnp_index": "/home/ubuntu/volume/SB/projects/matthew.galbraith/chr21-variant-pipeline-dev/Homo_sapiens_assembly38.dbsnp138.vcf.gz.tbi",
     "sample_id": "KF_REPLACEMENT",
     "output_basename": "TEST_GVCF"
 }
