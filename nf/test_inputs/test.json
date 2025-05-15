@@ -1,6 +1,6 @@
 {
-    "alignment": "/home/ubuntu/volume/SB/projects/matthew.galbraith/chr21-variant-pipeline-dev/HTP0428A.cram",
-    "align_index": "/home/ubuntu/volume/SB/projects/matthew.galbraith/chr21-variant-pipeline-dev/HTP0428A.cram.crai",
+    "alignment": "/home/ubuntu/volume/chr21_gt_comparisons/SENTIEON_NF_TEST/subset.cram",
+    "align_index": "/home/ubuntu/volume/chr21_gt_comparisons/SENTIEON_NF_TEST/subset.cram.crai",
     "reference": "/home/ubuntu/volume/SB/projects/matthew.galbraith/chr21-variant-pipeline-dev/Homo_sapiens_assembly38.fasta",
     "reference_index": "/home/ubuntu/volume/SB/projects/matthew.galbraith/chr21-variant-pipeline-dev/Homo_sapiens_assembly38.fasta.fai",
     "sentieon_license_file": "/home/ubuntu/volume/Childrens_Hospital_of_Philadelphia_eval.lic",

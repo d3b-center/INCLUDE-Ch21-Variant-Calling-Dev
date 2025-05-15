@@ -1,5 +1,5 @@
 process SENTIEON_GVCFTYPER {
-    label 'C32'
+    label 'C8'
     container "pgc-images.sbgenomics.com/hdchen/sentieon:202308.03"
 
     input:
@@ -8,8 +8,7 @@ process SENTIEON_GVCFTYPER {
     tuple path(dbsnp), path(dbsnp_index)
 
     output:
-    path('*vcf.gz'), emit: output_vcf
-    path('*vcf.gz.tbi'), emit: output_vcf_index
+    tuple path('*vcf.gz'), path('*vcf.gz.tbi'), emit: output_vcf
 
     script:
     def license_export = task.ext.export_args ?: ''

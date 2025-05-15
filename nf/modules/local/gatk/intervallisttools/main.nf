@@ -10,13 +10,13 @@ process GATK_INTERVALLISTOOLS {
     path('*interval_list'), emit: output_intervallist
 
     script:
-    def ext_args = task.ext.args ?: ''
+    def prefix = task.ext.prefix ?: "${action}"
     """
     /gatk IntervalListTools \\
     -I $input \\
     --SECOND_INPUT $input2 \\
     --ACTION $action \\
-    $ext_args
+    -O ${prefix}.interval_list
 
     """
 
