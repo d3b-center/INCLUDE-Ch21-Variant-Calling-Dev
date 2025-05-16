@@ -21,8 +21,9 @@ process BCFTOOLS_CONCAT_RENAME {
     """
     $create_samp_file \\
     tabix -l $vcf1 > vcf1_chr.txt && \\
-    single_line=\$(grep -n \$(tabix -l $vcf2) chr_order.txt | cut -f 1 -d ":") && \\
+    tabix -l $vcf2 > vcf2_chr.txt && \\
     sort -V vcf1_chr.txt vcf2_chr.txt > chr_order.txt && \\
+    single_line=\$(grep -n \$(tabix -l $vcf2) chr_order.txt | cut -f 1 -d ":") && \\
     total_chr=\$(wc -l chr_order.txt | cut -f 1 -d " ") && \\
     region_list1=\$(head -n \$((single_line-1)) chr_order.txt | tr "\n" ",") && \\
     region_list2=\$(tail -n \$((total_chr - single_line)) chr_order.txt | tr "\n" ",") && \\
