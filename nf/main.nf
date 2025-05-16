@@ -3,7 +3,8 @@
 include { SENTIEON_DNASCOPE } from './modules/local/sentieon/dnascope/main'
 include { SENTIEON_DNASCOPE as SENTIEON_DNASCOPE_DIPLOID } from './modules/local/sentieon/dnascope/main'
 include { GATK_INTERVALLISTOOLS } from './modules/local/gatk/intervallisttools/main'
-include { PICARD_MERGEVCFS } from './modules/local/picard/mergevcfs/main'
+// include { PICARD_MERGEVCFS } from './modules/local/picard/mergevcfs/main'
+include { BCFTOOLS_CONCAT_RENAME } from './modules/local/bcftools/concat_rename/main'
 include { SENTIEON_GVCFTYPER } from './modules/local/sentieon/gvcftyper/main.nf'
 
 workflow {
@@ -41,13 +42,18 @@ workflow {
         non_diploid_ploidy,
         dbsnp_combined
     )
-    vcfs_to_merge = diploid_vcf.map { it[0] }.combine(non_diploid_vcf.map { it[0] })
-    vcf_indexes_to_merge = diploid_vcf.map { it[1] }.combine(non_diploid_vcf.map { it[1] })
-    merged_gvcf = PICARD_MERGEVCFS(
-        vcfs_to_merge,
-        vcf_indexes_to_merge,
-        sample_id
+    // vcfs_to_merge = diploid_vcf.map { it[0] }.combine(non_diploid_vcf.map { it[0] })
+    // vcf_indexes_to_merge = diploid_vcf.map { it[1] }.combine(non_diploid_vcf.map { it[1] })
+    // merged_gvcf = PICARD_MERGEVCFS(
+    //     vcfs_to_merge,
+    //     vcf_indexes_to_merge,
+    //     sample_id
         
+    // )
+    merged_gvcf = BCFTOOLS_CONCAT_RENAME(
+        diploid_vcf,
+        non_diploid_vcf,
+        sample_id
     )
 
     SENTIEON_GVCFTYPER(
