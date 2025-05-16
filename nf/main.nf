@@ -42,20 +42,11 @@ workflow {
         non_diploid_ploidy,
         dbsnp_combined
     )
-    // vcfs_to_merge = diploid_vcf.map { it[0] }.combine(non_diploid_vcf.map { it[0] })
-    // vcf_indexes_to_merge = diploid_vcf.map { it[1] }.combine(non_diploid_vcf.map { it[1] })
-    // merged_gvcf = PICARD_MERGEVCFS(
-    //     vcfs_to_merge,
-    //     vcf_indexes_to_merge,
-    //     sample_id
-        
-    // )
     merged_gvcf = BCFTOOLS_CONCAT_RENAME(
         diploid_vcf,
         non_diploid_vcf,
         sample_id
     )
-
     SENTIEON_GVCFTYPER(
         merged_gvcf,
         reference_plus_fai,
