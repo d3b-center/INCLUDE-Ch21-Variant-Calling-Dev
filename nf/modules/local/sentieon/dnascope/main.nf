@@ -16,6 +16,7 @@ process SENTIEON_DNASCOPE {
     def license_export = task.ext.export_args ?: ''
     def dbsnp_flag = dbsnp ? "-d $dbsnp" : ''
     def algo_ext_args = task.ext.algo_args ?: ''
+    def prefix = task.ext.prefix ?: 'output'
     """
     $license_export \\
     sentieon driver \\
@@ -25,7 +26,8 @@ process SENTIEON_DNASCOPE {
     --algo DNAscope \\
     --ploidy $ploidy \\
     $dbsnp_flag \\
-    $algo_ext_args
+    $algo_ext_args \\
+    "${prefix}.ploidy_${ploidy}.${params.emit_mode == 'gvcf' ? 'g.vcf.gz' : 'vcf.gz'}"
     """
 
     stub:
