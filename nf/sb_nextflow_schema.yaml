@@ -6,46 +6,6 @@ executor_version: 23.04.1
 cwlVersion: None
 requirements:
 -   class: InlineJavascriptRequirement
-    expressionLib:
-    - |2-
-
-      var setMetadata = function(file, metadata) {
-          if (!('metadata' in file))
-              file['metadata'] = metadata;
-          else {
-              for (var key in metadata) {
-                  file['metadata'][key] = metadata[key];
-              }
-          }
-          return file
-      };
-
-      var inheritMetadata = function(o1, o2) {
-          var commonMetadata = {};
-          if (!Array.isArray(o2)) {
-              o2 = [o2]
-          }
-          for (var i = 0; i < o2.length; i++) {
-              var example = o2[i]['metadata'];
-              for (var key in example) {
-                  if (i == 0)
-                      commonMetadata[key] = example[key];
-                  else {
-                      if (!(commonMetadata[key] == example[key])) {
-                          delete commonMetadata[key]
-                      }
-                  }
-              }
-          }
-          if (!Array.isArray(o1)) {
-              o1 = setMetadata(o1, commonMetadata)
-          } else {
-              for (var i = 0; i < o1.length; i++) {
-                  o1[i] = setMetadata(o1[i], commonMetadata)
-              }
-          }
-          return o1;
-      };
 doc: |
     # KFDRC Sentieon DNAscope Mixed Ploidy Workflow
     This is a beta workflow to test the efficacy of using DNAscope for mixed ploidy samples.
@@ -284,14 +244,12 @@ outputs:
     label: DNAscope GVCF
     outputBinding:
         glob: 'results/DNAscope_GVCF/*vcf.gz*'
-        outputEval: "$(inheritMetadata(self, inputs.alignment))"
     type:
     - File
 -   id: DNAscope_Genotyped_VCF
     label: DNAscope Genotyped VCF
     outputBinding:
         glob: 'results/DNAscope_Genotyped_VCF/*.vcf.gz*'
-        outputEval: "$(inheritMetadata(self[0], inputs.alignment))"
     type:
     - File
 sbg:revisionNotes: Uploaded using sbpack v2024.12.17
