@@ -7,12 +7,15 @@ Read in VCFs from a sbfs mount and collate the SNP genotype and VAF data for dow
 import argparse
 import csv
 import sys
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from typing import IO
 
 from pysam import VariantFile, VariantRecord
 
 
-def get_dbsnp_coords(dbsnp_path: str, rs_id_list: list[str], contig: str | None) -> dict[str, list]:
+def get_dbsnp_coords(
+    dbsnp_path: str, rs_id_list: list[str] | None, contig: str | None
+) -> dict[str, list]:
     """Get dbSNP coordinates from a VCF file.
 
     Args:
@@ -26,14 +29,20 @@ def get_dbsnp_coords(dbsnp_path: str, rs_id_list: list[str], contig: str | None)
     """
     dbsnp_coord: dict[str, list] = {}
     with VariantFile(dbsnp_path, threads=4) as dbsnp_file:
-        for record in dbsnp_file.fetch(contig):
-            rs_id = record.id
-            if rs_id in rs_id_list:
-                dbsnp_coord[rs_id] = [record.chrom, record.pos, record.ref, record.alts]
+        if rs_id_list is not None:
+            for record in dbsnp_file.fetch(contig):
+                rs_id = record.id
+                if rs_id in rs_id_list:
+                    dbsnp_coord[rs_id] = [record.chrom, record.pos, record.ref, record.alts]
+        else:
+            for record in dbsnp_file.fetch(contig):
+                rs_id = record.id
+                if rs_id not in dbsnp_coord:
+                    dbsnp_coord[rs_id] = [record.chrom, record.pos, record.ref, record.alts]
     return dbsnp_coord
 
 
-def parse_vcfs(dbsnp: dict[str, list], vcf_fname: str, out_file: IO) -> None:
+def parse_vcfs(dbsnp: dict[str, list], vcf_fname: str, sample_id: str) -> list[str]:
     """Parse VCF files from a sbfs mount and collate the SNP genotype and VAF data.
 
     Args:
@@ -42,38 +51,35 @@ def parse_vcfs(dbsnp: dict[str, list], vcf_fname: str, out_file: IO) -> None:
         out_file (IO): Output file handle to write the results to.
 
     """
+    print_list: list[str] = []
     with VariantFile(vcf_fname, threads=4) as vcf_file:
-        sample_id: str = vcf_file.header.samples[0]
         print(f"Processing {vcf_fname} for {sample_id}", file=sys.stderr)
         try:
             for rs_id in dbsnp:
+                # format location as SAM region string as it's 1-based
+                sam_region = f"{dbsnp[rs_id][0]}:{dbsnp[rs_id][1]}-{dbsnp[rs_id][1]}"
                 record: VariantRecord = vcf_file.fetch(
-                    dbsnp[rs_id][0], dbsnp[rs_id][1], dbsnp[rs_id][1] + 1
+                    region=sam_region
                 ).__next__()
                 # We want it to either be a call in a ref block, or an already annotated rs_id
-                if record.id is None or record.pos != dbsnp[rs_id][1] or (
-                    record.alts is not None and record.alts[0] in dbsnp[rs_id][3]
+                if (
+                    record.id is None
+                    or record.pos != dbsnp[rs_id][1]
+                    or (record.alts is not None and record.alts[0] in dbsnp[rs_id][3])
                 ):
                     # Get the genotype
                     gt: str = "/".join(map(str, record.samples[sample_id]["GT"]))
                     # Get the VAF
-                    try:
-                        if "AD" in record.samples[sample_id]:
-                            vaf: float = (
-                                record.samples[sample_id]["AD"][1] / record.samples[sample_id]["DP"]
-                            )
-                        else:
-                            vaf = 0
-                    except ZeroDivisionError as e:
-                        print(
-                            f"{e}. ZeroDivisionError for {sample_id} {rs_id} {record.pos}",
-                            file=sys.stderr,
+                    if "AD" in record.samples[sample_id] and record.samples[sample_id]["DP"] > 0:
+                        vaf: float = (
+                            record.samples[sample_id]["AD"][1] / record.samples[sample_id]["DP"]
                         )
+                    else:
                         vaf = 0
+
                     # Print the results
-                    print(
-                        f"{sample_id}\t{rs_id}\t{dbsnp[rs_id][0]}\t{dbsnp[rs_id][1]}\t{gt}\t{vaf}",
-                        file=out_file,
+                    print_list.append(
+                        f"{sample_id}\t{rs_id}\t{dbsnp[rs_id][0]}\t{dbsnp[rs_id][1]}\t{gt}\t{vaf}"
                     )
                 else:
                     print(
@@ -82,6 +88,8 @@ def parse_vcfs(dbsnp: dict[str, list], vcf_fname: str, out_file: IO) -> None:
                     )
         except Exception as e:
             print(f"Error processing {vcf_fname}: {e}", file=sys.stderr)
+            sys.exit(1)
+        return print_list
 
 
 def main():
@@ -128,25 +136,50 @@ def main():
         dest="contig",
         help="If rs_ids come frm a single contig, list here to speed up processing",
     )
+    parser.add_argument(
+        "-f",
+        "--field",
+        action="store",
+        dest="field",
+        help="Which ID field to use for sample ID",
+        default="Kids First Biospecimen ID",
+    )
 
     args = parser.parse_args()
     print("Reading rs ID list and getting related dbSNP coordinates", file=sys.stderr)
-    with open(args.rs_id_list) as rs_id_file:
-        rs_id_list: list[str] = rs_id_file.read().splitlines()
+    rs_id_list: list[str] | None = None
+    if args.rs_id_list is not None:
+        with open(args.rs_id_list) as rs_id_file:
+            rs_id_list = rs_id_file.read().splitlines()
     dbsnp: dict[str, list] = get_dbsnp_coords(args.dbsnp, rs_id_list, args.contig)
 
     with open(args.manifest) as manifest, open(args.out_file, "w") as out_file:
         # print header
-        print("sample_id\trs_id\tchrom\tpos\tsample_genotype\tsample_vaf")
+        print("sample_id\trs_id\tchrom\tpos\tsample_genotype\tsample_vaf", file=out_file)
         manifest_file = csv.reader(manifest, delimiter="\t")
         head: list[str] = next(manifest_file)
         name_idx: int = head.index("name")
-        for line in manifest_file:
-            fname: str = line[name_idx]
-            if not fname.endswith("tbi"):
-                vcf_path: str = f"{args.sb_mount}/{fname}"
-                parse_vcfs(dbsnp, vcf_path, out_file)
-
+        sample_idx: int = head.index(args.field)
+        with ProcessPoolExecutor(max_workers=4) as executor:
+            tasks = [
+                executor.submit(
+                    parse_vcfs, dbsnp, f"{args.sb_mount}/{line[name_idx]}", line[sample_idx]
+                )
+                for line in manifest_file
+                if not line[name_idx].endswith("tbi")
+            ]
+            try:
+                for task in as_completed(tasks):
+                    print(*task.result(), sep="\n", file=out_file)
+            except KeyboardInterrupt:
+                print("Keyboard interrupt, exiting", file=sys.stderr)
+                executor.shutdown(wait=False, cancel_futures=True)
+                sys.exit(1)
+            except TimeoutError:
+                print("Timeout occurred during shutdown.", file=sys.stderr)
+            finally:
+                out_file.close()
+    print("Finished processing all files", file=sys.stderr)
 
 if __name__ == "__main__":
     main()
