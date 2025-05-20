@@ -1,3 +1,3 @@
-[submodule "kf-alignment-workflow"]
-	path = kf-alignment-workflow
+[submodule "cwl/kf-alignment-workflow"]
+	path = cwl/kf-alignment-workflow
 	url = https://github.com/kids-first/kf-alignment-workflow

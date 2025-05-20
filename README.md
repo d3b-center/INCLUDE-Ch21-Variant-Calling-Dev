@@ -11,3 +11,6 @@ This repo is used to house tools and workflows to improve and enhance analysis o
 This is a research workflow for users wishing to modify the ploidy of certain
 regions of their existing GVCF calls. This uses the `coalescent` genotype model, equivalent to GATK 3.8
 from Sentieon, a close analog of the original production workflow GATK 3.5 (via 4beta).
+
+## [KFDRC Sentieon DNAscope Mixed Ploidy Workflow](docs/KFDRC_SENTIEON_DNASCOPE_MIXED_PLOIDY.md)
+This is a beta workflow to test the efficacy of using DNAscope for mixed ploidy samples.
