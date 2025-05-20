@@ -155,7 +155,7 @@ inputs:
     - 'null'
     - File
     doc: dbSNP reference to use for populating VCF `ID` column
-    sbg:suggestedValue: { class: File, path: 6825ea6d799cc5199034188d, name: Homo_sapiens_assembly38.dbsnp138.vcf.gz }
+    sbg:suggestedValue: { class: File, path: 679b9dda95fcd72d56a8d4d1, name: Homo_sapiens_assembly38.dbsnp.vcf.gz }
 -   id: dbsnp_index
     inputBinding:
         prefix: --dbsnp_index
@@ -163,7 +163,7 @@ inputs:
     - 'null'
     - File
     doc: Index of `dbsnp` file
-    sbg:suggestedValue: { class: File, path: 6825ea6d799cc5199034188c, name: Homo_sapiens_assembly38.dbsnp138.vcf.gz.tbi }
+    sbg:suggestedValue: { class: File, path: 679b9dda95fcd72d56a8d4d2, name: Homo_sapiens_assembly38.dbsnp.vcf.gz.tbi }
 -   id: action
     inputBinding:
         prefix: --action
