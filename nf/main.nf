@@ -16,6 +16,7 @@ workflow {
     wgs_intervals = Channel.fromPath(params.wgs_intervals).first()
     non_diploid_intervals = Channel.fromPath(params.non_diploid_intervals).first()
     non_diploid_ploidy = params.non_diploid_ploidy
+    dnascope_model = params.dnascope_model ? Channel.fromPath(params.dnascope_model) : Channel.value([])
     dbsnp = params.dbsnp ? Channel.fromPath(params.dbsnp) : Channel.value([])
     dbsnp_index = params.dbsnp_index ? Channel.fromPath(params.dbsnp_index) : Channel.value([])
     indexed_alignment = alignment.combine(align_index)
@@ -33,7 +34,8 @@ workflow {
         reference_plus_fai,
         subtracted_intervals,
         2,
-        dbsnp_combined
+        dbsnp_combined,
+        dnascope_model
     )
     non_diploid_vcf = SENTIEON_HAPLOTYPER(
         indexed_alignment,

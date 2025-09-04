@@ -8,6 +8,7 @@ process SENTIEON_DNASCOPE {
     path(interval)
     val(ploidy)
     tuple path(dbsnp), path(dbsnp_index)
+    path(dnascope_model)
 
 
     output:
@@ -15,6 +16,7 @@ process SENTIEON_DNASCOPE {
     script:
     def license_export = task.ext.export_args ?: ''
     def dbsnp_flag = dbsnp ? "-d $dbsnp" : ''
+    def model = dnascope_model ? "--model $dnascope_model" : ''
     def algo_ext_args = task.ext.algo_args ?: ''
     def prefix = task.ext.prefix ?: 'output'
     """
@@ -26,6 +28,7 @@ process SENTIEON_DNASCOPE {
     --algo DNAscope \\
     --ploidy $ploidy \\
     $dbsnp_flag \\
+    $model \\
     $algo_ext_args \\
     "${prefix}.ploidy_${ploidy}.${params.emit_mode == 'gvcf' ? 'g.vcf.gz' : 'vcf.gz'}"
     """
