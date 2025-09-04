@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
-include { SENTIEON_DNASCOPE } from './modules/local/sentieon/dnascope/main'
 include { SENTIEON_DNASCOPE as SENTIEON_DNASCOPE_DIPLOID } from './modules/local/sentieon/dnascope/main'
+include { SENTIEON_HAPLOTYPER } from './modules/local/sentieon/haplotyper/main'
 include { GATK_INTERVALLISTOOLS } from './modules/local/gatk/intervallisttools/main'
 // include { PICARD_MERGEVCFS } from './modules/local/picard/mergevcfs/main'
 include { BCFTOOLS_CONCAT_RENAME } from './modules/local/bcftools/concat_rename/main'
@@ -35,7 +35,7 @@ workflow {
         2,
         dbsnp_combined
     )
-    non_diploid_vcf = SENTIEON_DNASCOPE(
+    non_diploid_vcf = SENTIEON_HAPLOTYPER(
         indexed_alignment,
         reference_plus_fai,
         non_diploid_intervals,

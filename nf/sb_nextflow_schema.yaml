@@ -108,21 +108,21 @@ inputs:
 -   id: call_conf
     inputBinding:
         prefix: --call_conf
-    default: 30
+    default: 10
     type:
     - 'null'
     - int
 -   id: emit_conf
     inputBinding:
         prefix: --emit_conf
-    default: 30
+    default: 10
     type:
     - 'null'
     - int
 -   id: genotype_model
     inputBinding:
         prefix: --genotype_model
-    default: multinomial
+    default: coalescent
     type:
     - 'null'
     - string
@@ -148,6 +148,14 @@ inputs:
     type:
     - File
     doc: GATK Interval list format intervals of non-diploid regions
+-   id: dnascope_model
+    inputBinding:
+        prefix: --model
+    type:
+    - 'null'
+    - File
+    doc: Model file for DNAscope
+    sbg:suggestedValue: { class: File, path: 68b8924b0fa6a65af8697957, name: SentieonIlluminaWGS2.2.bundle }
 -   id: dbsnp
     inputBinding:
         prefix: --dbsnp
