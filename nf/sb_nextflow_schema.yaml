@@ -150,7 +150,7 @@ inputs:
     doc: GATK Interval list format intervals of non-diploid regions
 -   id: dnascope_model
     inputBinding:
-        prefix: --model
+        prefix: --dnascope_model
     type:
     - 'null'
     - File
