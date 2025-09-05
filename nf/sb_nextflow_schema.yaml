@@ -148,9 +148,9 @@ inputs:
     type:
     - File
     doc: GATK Interval list format intervals of non-diploid regions
--   id: dnascope_model
+-   id: dnascope_model_bundle
     inputBinding:
-        prefix: --dnascope_model
+        prefix: --dnascope_model_bundle
     type:
     - 'null'
     - File
@@ -248,16 +248,16 @@ inputs:
     - string
 
 outputs:
--   id: DNAscope_GVCF
-    label: DNAscope GVCF
+-   id: hybrid_GVCF
+    label: Hybrid GVCF
     outputBinding:
-        glob: 'results/DNAscope_GVCF/*vcf.gz*'
+        glob: 'results/hybrid_GVCF/*vcf.gz*'
     type:
     - File
--   id: DNAscope_Genotyped_VCF
-    label: DNAscope Genotyped VCF
+-   id: hybrid_Genotyped_VCF
+    label: Hybrid Genotyped VCF
     outputBinding:
-        glob: 'results/DNAscope_Genotyped_VCF/*.vcf.gz*'
+        glob: 'results/hybrid_Genotyped_VCF/*.vcf.gz*'
     type:
     - File
 sbg:revisionNotes: Uploaded using sbpack v2024.12.17
