@@ -4,15 +4,12 @@ app_content:
 class: nextflow
 executor_version: 23.04.1
 cwlVersion: None
+label: KFDRC Sentieon DNAscope Haplotyper Hybrid Mixed Ploidy
 requirements:
 -   class: InlineJavascriptRequirement
 doc: |
-    # KFDRC Sentieon DNAscope Mixed Ploidy Workflow
-    This is a beta workflow to test the efficacy of using DNAscope for mixed ploidy samples.
-
-    <p align="center">
-    <img src="https://github.com/d3b-center/INCLUDE-Ch21-Variant-Calling-Dev/blob/master/docs/logo/d3b-inline-white.svg" alt="D3b repository logo" width="660px" />
-    </p>
+    # KFDRC Sentieon DNAscope/Haplotyper Hybrid Mixed Ploidy Workflow
+    This is a beta workflow to test the efficacy of using DNAscope + Haplotyper for mixed ploidy samples. It runs `DNAscop`e with an optional model (recommended) for the diploid contigs, and Haplotyper for the non-diploid contig.
 
     ## INPUTS
     ### Required:
@@ -24,6 +21,8 @@ doc: |
     - non_diploid_intervals: GATK Interval list format intervals of non-diploid regions
     - non_diploid_ploidy: ploidy of non-diploid regions
     - sentieon_license_file _or_ sentieon_license_server: One of these must be populated, depending on local run or cloud
+    ### Strongly Recommended:
+    - dnascope_model_bundle: Obtainable from https://github.com/Sentieon/sentieon-models
     ### Optional
     - dsnp: dbSNP reference to use for populating VCF `ID` column
     - dbsnp_index: index of `dbsnp`
@@ -31,8 +30,9 @@ doc: |
     - emit_mode: Currently changing this will break the workflow
 
     ## OUTPUTS:
-    - DNAscope GVCF
-    - DNAscope Genotyped VCF
+    - Hybrid GVCF
+    - Hybrid Genotyped VCF
+
 hints:
 -   class: sbg:NextflowExecutionMode
     value: multi-instance

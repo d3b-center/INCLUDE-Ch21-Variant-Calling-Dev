@@ -1,5 +1,5 @@
-# KFDRC Sentieon DNAscope Mixed Ploidy Workflow
-This is a beta workflow to test the efficacy of using DNAscope for mixed ploidy samples.
+# KFDRC Sentieon DNAscope/Haplotyper Hybrid Mixed Ploidy Workflow
+This is a beta workflow to test the efficacy of using DNAscope + Haplotyper for mixed ploidy samples. It runs `DNAscop`e with an optional model (recommended) for the diploid contigs, and Haplotyper for the non-diploid contig.
 
 <p align="center">
   <img src="logo/d3b-inline-white.svg" alt="D3b repository logo" width="660px" />
@@ -15,6 +15,8 @@ This is a beta workflow to test the efficacy of using DNAscope for mixed ploidy 
 - non_diploid_intervals: GATK Interval list format intervals of non-diploid regions
 - non_diploid_ploidy: ploidy of non-diploid regions
 - sentieon_license_file _or_ sentieon_license_server: One of these must be populated, depending on local run or cloud
+### Strongly Recommended:
+ - dnascope_model_bundle: Obtainable from https://github.com/Sentieon/sentieon-models
 ### Optional
 - dsnp: dbSNP reference to use for populating VCF `ID` column
 - dbsnp_index: index of `dbsnp`
@@ -22,5 +24,5 @@ This is a beta workflow to test the efficacy of using DNAscope for mixed ploidy 
 - emit_mode: Currently changing this will break the workflow
 
 ## OUTPUTS:
-- DNAscope GVCF
-- DNAscope Genotyped VCF
+- Hybrid GVCF
+- Hybrid Genotyped VCF
