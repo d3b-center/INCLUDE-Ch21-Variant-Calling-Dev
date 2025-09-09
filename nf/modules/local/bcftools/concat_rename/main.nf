@@ -16,22 +16,22 @@ process BCFTOOLS_CONCAT_RENAME {
 
     script:
     def prefix = task.ext.prefix ?: "merged.g.vcf.gz"
-    def create_samp_file = sample_name ? "echo $sample_name > sample_rename.txt &&" : ''
+    def create_samp_file = sample_name ? "echo $sample_name > sample_rename.txt;" : ''
     def opt_rename_arg = sample_name ? "-s sample_rename.txt" : ''
     """
-    $create_samp_file \\
-    tabix -l $vcf1 > vcf1_chr.txt && \\
-    tabix -l $vcf2 > vcf2_chr.txt && \\
-    sort -V vcf1_chr.txt vcf2_chr.txt > chr_order.txt && \\
-    single_line=\$(grep -n \$(tabix -l $vcf2) chr_order.txt | cut -f 1 -d ":") && \\
-    total_chr=\$(wc -l chr_order.txt | cut -f 1 -d " ") && \\
-    region_list1=\$(head -n \$((single_line-1)) chr_order.txt | tr "\n" ",") && \\
-    region_list2=\$(tail -n \$((total_chr - single_line)) chr_order.txt | tr "\n" ",") && \\
-    bcftools view -h $vcf2 | grep -v "#CHROM" > vcf2_header.txt && \\
-    bcftools annotate --header-lines vcf2_header.txt $vcf1 | bcftools head > new_head.txt && \\
-    cat <(bcftools view --threads 4 -r \$region_list1 $vcf1) <(bcftools view --threads 4 -H $vcf2) <(bcftools view --threads 4 -H -r \$region_list2 $vcf1) | \\
-    bcftools reheader --header new_head.txt $opt_rename_arg | \\
-    bcftools view -O z --threads 4 -o ${prefix}.g.vcf.gz &&
+    $create_samp_file
+    tabix -l $vcf1 > vcf1_chr.txt;
+    tabix -l $vcf2 > vcf2_chr.txt;
+    sort -V vcf1_chr.txt vcf2_chr.txt > chr_order.txt;
+    single_line=\$(grep -n \$(tabix -l $vcf2) chr_order.txt | cut -f 1 -d ":") && echo \$single_line;
+    total_chr=\$(wc -l chr_order.txt | cut -f 1 -d " ");
+    region_list1=\$(head -n \$((single_line-1)) chr_order.txt | tr "\\n" ",") && echo \$region_list1;
+    region_list2=\$(tail -n \$((total_chr - single_line)) chr_order.txt | tr "\\n" ",") && echo \$region_list2;
+    bcftools head $vcf2 | grep -v "#CHROM" > vcf2_header.txt;
+    bcftools annotate --header-lines vcf2_header.txt $vcf1 | bcftools head > new_head.txt;
+    cat <(bcftools view --threads 4 -r \$region_list1 $vcf1) <(bcftools view --threads 4 -H $vcf2) <(bcftools view --threads 4 -H -r \$region_list2 $vcf1) | \
+    bcftools reheader --header new_head.txt $opt_rename_arg | \
+    bcftools view -O z --threads 4 -o ${prefix}.g.vcf.gz;
     bcftools index --threads 4 -t ${prefix}.g.vcf.gz
     """
 
