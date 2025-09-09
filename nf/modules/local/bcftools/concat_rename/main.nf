@@ -23,12 +23,12 @@ process BCFTOOLS_CONCAT_RENAME {
     tabix -l $vcf1 > vcf1_chr.txt;
     tabix -l $vcf2 > vcf2_chr.txt;
     sort -V vcf1_chr.txt vcf2_chr.txt > chr_order.txt;
-    single_line=\$(grep -n \$(tabix -l $vcf2) chr_order.txt | cut -f 1 -d ":") && echo \$single_line;
+    single_line=\$(grep -n \$(tabix -l $vcf2) chr_order.txt | cut -f 1 -d ":");
     total_chr=\$(wc -l chr_order.txt | cut -f 1 -d " ");
-    region_list1=\$(head -n \$((single_line-1)) chr_order.txt | tr "\\n" ",") && echo \$region_list1;
-    region_list2=\$(tail -n \$((total_chr - single_line)) chr_order.txt | tr "\\n" ",") && echo \$region_list2;
+    region_list1=\$(head -n \$((single_line-1)) chr_order.txt | tr "\\n" ",");
+    region_list2=\$(tail -n \$((total_chr - single_line)) chr_order.txt | tr "\\n" ",");
     bcftools head $vcf2 | grep -v "#CHROM" > vcf2_header.txt;
-    bcftools annotate --header-lines vcf2_header.txt $vcf1 | bcftools head > new_head.txt;
+    bcftools annotate --header-lines vcf2_header.txt $vcf1 | bcftools head > new_head.txt || true;
     cat <(bcftools view --threads 4 -r \$region_list1 $vcf1) <(bcftools view --threads 4 -H $vcf2) <(bcftools view --threads 4 -H -r \$region_list2 $vcf1) | \
     bcftools reheader --header new_head.txt $opt_rename_arg | \
     bcftools view -O z --threads 4 -o ${prefix}.g.vcf.gz;
