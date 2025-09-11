@@ -19,6 +19,7 @@ process SENTIEON_DNASCOPE {
     def model_arg = dnascope_model_bundle ? "--model ${dnascope_model_bundle}/dnascope.model" : ''
     def algo_ext_args = task.ext.algo_args ?: ''
     def prefix = task.ext.prefix ?: 'output'
+    def suffix = task.ext.suffix
     """
     $license_export \\
     sentieon driver \\
@@ -30,7 +31,14 @@ process SENTIEON_DNASCOPE {
     $dbsnp_flag \\
     $model_arg \\
     $algo_ext_args \\
-    "${prefix}.ploidy_${ploidy}.${params.emit_mode == 'gvcf' ? 'g.vcf.gz' : 'vcf.gz'}"
+    "ploidy_${ploidy}.temp.$suffix" && \\
+    sentieon driver \\
+    -r $reference \\
+    --interval $interval \\
+    --algo DNAModelApply \\
+    $model_arg \\
+    -v "ploidy_${ploidy}.temp.$suffix" \\
+    "${prefix}.ploidy_${ploidy}.$suffix"
     """
 
     stub:
