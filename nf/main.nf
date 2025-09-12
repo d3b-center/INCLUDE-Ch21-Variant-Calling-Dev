@@ -15,7 +15,7 @@ workflow {
     reference = Channel.fromPath(params.reference).first()
     reference_index = Channel.fromPath(params.reference_index).first()
     wgs_intervals = Channel.fromPath(params.wgs_intervals).first()
-    non_diploid_intervals = params.non_diploid_intervals ? Channel.fromPath(params.non_diploid_intervals).first() : Channel.empty()
+    non_diploid_intervals = params.non_diploid_intervals ? Channel.fromPath(params.non_diploid_intervals).first() : ""
     non_diploid_ploidy = params.non_diploid_ploidy
     dnascope_model_bundle = params.dnascope_model_bundle ? Channel.fromPath(params.dnascope_model_bundle) : Channel.value([])
     dbsnp = params.dbsnp ? Channel.fromPath(params.dbsnp) : Channel.value([])
@@ -25,14 +25,11 @@ workflow {
     dbsnp_combined = dbsnp.combine(dbsnp_index)
     sample_id = params.sample_id ? Channel.value(params.sample_id) : Channel.value([])
 
-    diplioid_intervals = GATK_INTERVALLISTOOLS(
+    diplioid_intervals = non_diploid_intervals ? GATK_INTERVALLISTOOLS(
         wgs_intervals,
         non_diploid_intervals,
         'SUBTRACT'
-    )
-    if (!non_diploid_intervals) {
-        diplioid_intervals = wgs_intervals
-    }
+    ) : wgs_intervals
     diploid_vcf = SENTIEON_DNASCOPE_DIPLOID(
         indexed_alignment,
         reference_plus_fai,
@@ -49,13 +46,15 @@ workflow {
             sample_id
         )
     }
-    non_diploid_vcf = SENTIEON_HAPLOTYPER(
-        indexed_alignment,
-        reference_plus_fai,
-        non_diploid_intervals,
-        non_diploid_ploidy,
-        dbsnp_combined
-    )
+    if (non_diploid_intervals){
+        non_diploid_vcf = SENTIEON_HAPLOTYPER(
+            indexed_alignment,
+            reference_plus_fai,
+            non_diploid_intervals,
+            non_diploid_ploidy,
+            dbsnp_combined
+        )
+    }
     if (sample_id && non_diploid_intervals) {
         fname = non_diploid_vcf.map { vcf, _idx -> vcf.name }
         non_diploid_vcf = BCFTOOLS_RENAME_SAMPLE(
@@ -69,9 +68,11 @@ workflow {
         reference_plus_fai,
         dbsnp_combined
     )
-    SENTIEON_GVCFTYPER(
-        non_diploid_vcf,
-        reference_plus_fai,
-        dbsnp_combined
-    )
+    if (non_diploid_intervals){
+        SENTIEON_GVCFTYPER(
+            non_diploid_vcf,
+            reference_plus_fai,
+            dbsnp_combined
+        )
+    }
 }

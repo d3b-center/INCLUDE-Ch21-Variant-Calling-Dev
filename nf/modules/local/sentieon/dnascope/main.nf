@@ -12,7 +12,7 @@ process SENTIEON_DNASCOPE {
 
 
     output:
-    tuple path('*vcf.gz'), path('*vcf.gz.tbi'), emit: output_vcf
+    tuple path("*ploidy_${ploidy}.${task.ext.suffix}"), path("*ploidy_${ploidy}.${task.ext.suffix}.tbi"), emit: output_vcf
     script:
     def license_export = task.ext.export_args ?: ''
     def dbsnp_flag = dbsnp ? "-d $dbsnp" : ''
