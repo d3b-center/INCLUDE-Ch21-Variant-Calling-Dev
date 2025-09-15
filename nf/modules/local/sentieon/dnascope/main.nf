@@ -12,7 +12,7 @@ process SENTIEON_DNASCOPE {
 
 
     output:
-    tuple path("*ploidy_${ploidy}.${task.ext.suffix}"), path("*ploidy_${ploidy}.${task.ext.suffix}.tbi"), emit: output_vcf
+    tuple path("*dnascope.${task.ext.suffix}"), path("*dnascope.${task.ext.suffix}.tbi"), emit: output_vcf
     script:
     def license_export = task.ext.export_args ?: ''
     def dbsnp_flag = dbsnp ? "-d $dbsnp" : ''
@@ -31,14 +31,14 @@ process SENTIEON_DNASCOPE {
     $dbsnp_flag \\
     $model_arg \\
     $algo_ext_args \\
-    "ploidy_${ploidy}.temp.$suffix" && \\
+    "dnascope.temp.$suffix" && \\
     sentieon driver \\
     -r $reference \\
     --interval $interval \\
     --algo DNAModelApply \\
     $model_arg \\
-    -v "ploidy_${ploidy}.temp.$suffix" \\
-    "${prefix}.ploidy_${ploidy}.$suffix"
+    -v "dnascope.temp.$suffix" \\
+    "${prefix}.dnascope.$suffix"
     """
 
     stub:

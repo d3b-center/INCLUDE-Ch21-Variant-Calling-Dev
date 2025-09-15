@@ -63,16 +63,21 @@ workflow {
             sample_id
         )
     }
+    // add either here or in tool the output filename
+    diploid_output_fname = params.output_basename ? "${params.output_basename}.dnascope.vcf.gz" : "genotyped.dnascope.vcf.gz"
     SENTIEON_GVCFTYPER_DIPLOID(
         diploid_vcf,
         reference_plus_fai,
-        dbsnp_combined
+        dbsnp_combined,
+        diploid_output_fname
     )
     if (non_diploid_intervals){
+        non_diploid_output_fname = params.output_basename ? "${params.output_basename}.haplotyper.vcf.gz" : "genotyped.haplotyper.vcf.gz"
         SENTIEON_GVCFTYPER(
             non_diploid_vcf,
             reference_plus_fai,
-            dbsnp_combined
+            dbsnp_combined,
+            non_diploid_output_fname
         )
     }
 }

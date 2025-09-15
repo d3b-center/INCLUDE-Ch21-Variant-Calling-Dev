@@ -27,7 +27,7 @@ process SENTIEON_HAPLOTYPER {
     --ploidy $ploidy \\
     $dbsnp_flag \\
     $algo_ext_args \\
-    "${prefix}.ploidy_${ploidy}.${params.emit_mode == 'gvcf' ? 'g.vcf.gz' : 'vcf.gz'}"
+    "${prefix}.haplotyper.${params.emit_mode == 'gvcf' ? 'g.vcf.gz' : 'vcf.gz'}"
     """
 
     stub:

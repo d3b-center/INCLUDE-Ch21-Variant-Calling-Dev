@@ -12,9 +12,11 @@ This is a beta workflow to test the efficacy of using DNAscope + Haplotyper for 
 - reference: FASTA reference
 - reference_index: FAI index of `reference`
 - wgs_intervals: GATK Interval List format WGS intervals
-- non_diploid_intervals: GATK Interval list format intervals of non-diploid regions
-- non_diploid_ploidy: ploidy of non-diploid regions
 - sentieon_license_file _or_ sentieon_license_server: One of these must be populated, depending on local run or cloud
+- *non_diploid_intervals: GATK Interval list format intervals of non-diploid regions
+- *non_diploid_ploidy: ploidy of non-diploid regions
+
+*Can leave these out if you only want diploid calls using DNAscope on `wgs_intervals`
 ### Strongly Recommended:
  - dnascope_model_bundle: Obtainable from https://github.com/Sentieon/sentieon-models
 ### Optional
@@ -24,5 +26,5 @@ This is a beta workflow to test the efficacy of using DNAscope + Haplotyper for 
 - emit_mode: Currently changing this will break the workflow
 
 ## OUTPUTS:
-- Hybrid GVCF
-- Hybrid Genotyped VCF
+- DNAscope GVCF, Haplotyper GVCF if `non_diploid_intervals` provided
+- DNAscope Genotyped VCF, Haplotyper Genotyped VCF if `non_diploid_intervals` provided
