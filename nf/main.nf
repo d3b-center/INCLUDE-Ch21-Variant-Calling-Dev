@@ -23,7 +23,7 @@ workflow {
     indexed_alignment = alignment.combine(align_index)
     reference_plus_fai = reference.combine(reference_index)
     dbsnp_combined = dbsnp.combine(dbsnp_index)
-    sample_id = params.sample_id ? Channel.value(params.sample_id) : Channel.value([])
+    sample_id = params.sample_id ? Channel.value(params.sample_id) : ""
 
     diplioid_intervals = non_diploid_intervals ? GATK_INTERVALLISTOOLS(
         wgs_intervals,
