@@ -15,22 +15,19 @@ def main():
     # Read the manifest file into a dictionary
     rename_dict = {}
     with open(args.manifest_file, "r") as manifest_file:
-        header = manifest_file.readline().split("\t")
+        header = manifest_file.readline().strip().split("\t")
         old_index = header.index(args.old_key)
         new_index = header.index(args.new_key)
         for line in manifest_file:
             fields = line.strip().split("\t")
             rename_dict[fields[old_index]] = fields[new_index]
-    with open(args.input_file, "r") as input_file:
+    with open(args.input_file, "r") as input_file, open(args.output_file, "w") as output_file:
         header = input_file.readline()
-        lines = input_file.readlines()
-    with open(args.output_file, "w") as output_file:
-        print(header, file=output_file, end="")
-        for line in lines:
+        for line in input_file:
             fields = line.strip().split("\t")
             if fields[0] in rename_dict:
                 fields[0] = rename_dict[fields[0]]
-            output_file.write("\t".join(fields) + "\n")
+            print("\t".join(fields), file=output_file)
 
 if __name__ == "__main__":
     main()

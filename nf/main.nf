@@ -25,7 +25,7 @@ workflow {
     dbsnp_combined = dbsnp.combine(dbsnp_index)
     sample_id = params.sample_id ? Channel.value(params.sample_id) : ""
 
-    diplioid_intervals = non_diploid_intervals ? GATK_INTERVALLISTOOLS(
+    diploid_intervals = non_diploid_intervals ? GATK_INTERVALLISTOOLS(
         wgs_intervals,
         non_diploid_intervals,
         'SUBTRACT'
@@ -33,7 +33,7 @@ workflow {
     diploid_vcf = SENTIEON_DNASCOPE_DIPLOID(
         indexed_alignment,
         reference_plus_fai,
-        diplioid_intervals,
+        diploid_intervals,
         2,
         dbsnp_combined,
         dnascope_model_bundle

@@ -9,7 +9,6 @@ import csv
 import sys
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from typing import IO
-
 from pysam import VariantFile, VariantRecord
 
 
@@ -29,16 +28,10 @@ def get_dbsnp_coords(
     """
     dbsnp_coord: dict[str, list] = {}
     with VariantFile(dbsnp_path, threads=4) as dbsnp_file:
-        if rs_id_list is not None:
-            for record in dbsnp_file.fetch(contig):
-                rs_id = record.id
-                if rs_id in rs_id_list:
-                    dbsnp_coord[rs_id] = [record.chrom, record.pos, record.ref, record.alts]
-        else:
-            for record in dbsnp_file.fetch(contig):
-                rs_id = record.id
-                if rs_id not in dbsnp_coord:
-                    dbsnp_coord[rs_id] = [record.chrom, record.pos, record.ref, record.alts]
+        for record in dbsnp_file.fetch(contig):
+            rs_id = record.id
+            if (rs_id_list and rs_id in rs_id_list) or rs_id not in dbsnp_coord:
+                dbsnp_coord[rs_id] = [record.chrom, record.pos, record.ref, record.alts]
     return dbsnp_coord
 
 

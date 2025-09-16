@@ -2,7 +2,6 @@
 """Plot SNP genotype and VAF data using ggplot into dotplot."""
 
 import argparse
-
 import pandas as pd
 from plotnine import aes, element_text, geom_hline, geom_point, ggplot, labs, theme
 
