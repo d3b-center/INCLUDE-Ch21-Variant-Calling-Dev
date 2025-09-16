@@ -249,7 +249,7 @@ inputs:
     - string
 
 outputs:
--   id: hGVCF
+-   id: GVCF
     label: GVCF
     outputBinding:
         glob: 'results/GVCF/*vcf.gz*'
