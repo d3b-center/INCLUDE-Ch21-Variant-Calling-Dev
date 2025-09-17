@@ -9,7 +9,7 @@ requirements:
 -   class: InlineJavascriptRequirement
 doc: |
     # KFDRC Sentieon DNAscope/Haplotyper Hybrid Mixed Ploidy Workflow
-    This is a beta workflow to test the efficacy of using DNAscope + Haplotyper for mixed ploidy samples. It runs `DNAscop`e with an optional model (recommended) for the diploid contigs, and Haplotyper for the non-diploid contig.
+    This is a beta workflow to test the efficacy of using DNAscope + Haplotyper for mixed ploidy samples. It runs `DNAscope` with an optional model (recommended) for the diploid contigs, and Haplotyper for the non-diploid contig.
 
     ## INPUTS
     ### Required:
