@@ -25,11 +25,29 @@ workflow {
     dbsnp_combined = dbsnp.combine(dbsnp_index)
     sample_id = params.sample_id ? Channel.value(params.sample_id) : ""
 
-    diploid_intervals = non_diploid_intervals ? GATK_INTERVALLISTOOLS(
-        wgs_intervals,
-        non_diploid_intervals,
-        'SUBTRACT'
-    ) : wgs_intervals
+    diploid_intervals = wgs_intervals
+    if (non_diploid_intervals){
+        diploid_intervals = GATK_INTERVALLISTOOLS(
+            wgs_intervals,
+            non_diploid_intervals,
+            'SUBTRACT'
+            )
+        non_diploid_vcf = SENTIEON_HAPLOTYPER(
+            indexed_alignment,
+            reference_plus_fai,
+            non_diploid_intervals,
+            non_diploid_ploidy,
+            dbsnp_combined
+        )
+        if (sample_id){
+            fname = non_diploid_vcf.map { vcf, _idx -> vcf.name }
+            non_diploid_vcf = BCFTOOLS_RENAME_SAMPLE(
+                non_diploid_vcf,
+                fname,
+                sample_id
+            )
+        }
+    }
     diploid_vcf = SENTIEON_DNASCOPE_DIPLOID(
         indexed_alignment,
         reference_plus_fai,
@@ -46,24 +64,6 @@ workflow {
             sample_id
         )
     }
-    if (non_diploid_intervals){
-        non_diploid_vcf = SENTIEON_HAPLOTYPER(
-            indexed_alignment,
-            reference_plus_fai,
-            non_diploid_intervals,
-            non_diploid_ploidy,
-            dbsnp_combined
-        )
-    }
-    if (sample_id && non_diploid_intervals) {
-        fname = non_diploid_vcf.map { vcf, _idx -> vcf.name }
-        non_diploid_vcf = BCFTOOLS_RENAME_SAMPLE(
-            non_diploid_vcf,
-            fname,
-            sample_id
-        )
-    }
-    // add either here or in tool the output filename
     diploid_output_fname = params.output_basename ? "${params.output_basename}.dnascope.vcf.gz" : "genotyped.dnascope.vcf.gz"
     SENTIEON_GVCFTYPER_DIPLOID(
         diploid_vcf,
