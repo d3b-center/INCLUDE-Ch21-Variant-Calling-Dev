@@ -1,4 +1,4 @@
-process SENTIEON_DNASCOPE {
+process SENTIEON_HAPLOTYPER {
     label 'C32'
     container "pgc-images.sbgenomics.com/hdchen/sentieon:202308.03"
 
@@ -8,37 +8,26 @@ process SENTIEON_DNASCOPE {
     path(interval)
     val(ploidy)
     tuple path(dbsnp), path(dbsnp_index)
-    path(dnascope_model_bundle)
 
 
     output:
-    tuple path("*dnascope.${task.ext.suffix}"), path("*dnascope.${task.ext.suffix}.tbi"), emit: output_vcf
+    tuple path('*vcf.gz'), path('*vcf.gz.tbi'), emit: output_vcf
     script:
     def license_export = task.ext.export_args ?: ''
     def dbsnp_flag = dbsnp ? "-d $dbsnp" : ''
-    def model_arg = dnascope_model_bundle ? "--model ${dnascope_model_bundle}/dnascope.model" : ''
     def algo_ext_args = task.ext.algo_args ?: ''
     def prefix = task.ext.prefix ?: 'output'
-    def suffix = task.ext.suffix
     """
     $license_export \\
     sentieon driver \\
     -i $alignment \\
     -r $reference \\
     --interval $interval \\
-    --algo DNAscope \\
+    --algo Haplotyper \\
     --ploidy $ploidy \\
     $dbsnp_flag \\
-    $model_arg \\
     $algo_ext_args \\
-    "dnascope.temp.$suffix" && \\
-    sentieon driver \\
-    -r $reference \\
-    --interval $interval \\
-    --algo DNAModelApply \\
-    $model_arg \\
-    -v "dnascope.temp.$suffix" \\
-    "${prefix}.dnascope.$suffix"
+    "${prefix}.haplotyper.${params.emit_mode == 'gvcf' ? 'g.vcf.gz' : 'vcf.gz'}"
     """
 
     stub:

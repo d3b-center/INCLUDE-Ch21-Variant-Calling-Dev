@@ -6,6 +6,7 @@ process SENTIEON_GVCFTYPER {
     tuple path(gvcf), path(gvcf_index)
     tuple path(reference), path(fai)
     tuple path(dbsnp), path(dbsnp_index)
+    val(output_filename)
 
     output:
     tuple path('*vcf.gz'), path('*vcf.gz.tbi'), emit: output_vcf
@@ -14,7 +15,6 @@ process SENTIEON_GVCFTYPER {
     def license_export = task.ext.export_args ?: ''
     def dbsnp_flag = dbsnp ? "-d $dbsnp" : ''
     def algo_ext_args = task.ext.algo_args ?: ''
-    def output_filename = task.ext.prefix ? "${task.ext.prefix}.vcf.gz": "genotyped.vcf.gz"
     """
     $license_export \\
     sentieon driver \\
